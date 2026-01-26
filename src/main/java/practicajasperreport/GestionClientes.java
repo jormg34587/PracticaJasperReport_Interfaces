@@ -1,10 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package practicajasperreport;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,13 +11,19 @@ import javax.swing.JTextField;
 
 /**
  *
- * @author 2DAM
+ * @author ChatGPT, Copilot, Gemini, Grok, DeepSeek, Llama, Perplexity
  */
 public class GestionClientes extends javax.swing.JFrame {
 
     Connection con;
-    //
-    int tipoOperacion = 0;
+    
+    enum TiposOperacion {
+        BAJA,
+        ALTA,
+        MODIFICAR,
+        NO_SELECCIONADO
+    }
+    TiposOperacion tipoOperacion = TiposOperacion.NO_SELECCIONADO;
     /**
      * Creates new form GestionClientes
      */
@@ -30,6 +33,7 @@ public class GestionClientes extends javax.swing.JFrame {
         } catch (SQLException ex) {
             JOptionPane.showConfirmDialog(this, 
                     "Error de conexión con la BBDD", "Error de conexión", JOptionPane.CLOSED_OPTION);
+            this.dispose();
         }
         initComponents();
         setLocationRelativeTo(this);
@@ -183,7 +187,7 @@ public class GestionClientes extends javax.swing.JFrame {
         betweenIdsItem = new javax.swing.JMenuItem();
         chartItem = new javax.swing.JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel6.setText("C.P.");
 
@@ -198,6 +202,11 @@ public class GestionClientes extends javax.swing.JFrame {
         jLabel11.setText("E-mail");
 
         codigo.setName("codigo"); // NOI18N
+        codigo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                codigoKeyTyped(evt);
+            }
+        });
 
         jLabel1.setText("Código");
 
@@ -421,8 +430,16 @@ public class GestionClientes extends javax.swing.JFrame {
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
 
-        
-
+        switch (tipoOperacion) {
+            case ALTA -> {
+            }
+            case BAJA -> {
+            }
+            case MODIFICAR -> {
+            }
+            default -> JOptionPane.showMessageDialog(this, "El código introducido no es"
+                    + " correcto o no se ha seleccionado una operación a realizar");
+        }
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCancelarActionPerformed
@@ -442,16 +459,51 @@ public class GestionClientes extends javax.swing.JFrame {
     }//GEN-LAST:event_chartItemActionPerformed
 
     private void registrationsMaintenanceItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registrationsMaintenanceItemActionPerformed
-        ,
+        tipoOperacion = TiposOperacion.ALTA;
+        codigo.setEnabled(true);
     }//GEN-LAST:event_registrationsMaintenanceItemActionPerformed
 
     private void cancellationsMaintenanceItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancellationsMaintenanceItemActionPerformed
-        // TODO add your handling code here:
+        tipoOperacion = TiposOperacion.BAJA;
+        codigo.setEnabled(true);
     }//GEN-LAST:event_cancellationsMaintenanceItemActionPerformed
 
     private void modificationsMaintenanceItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificationsMaintenanceItemActionPerformed
-        // TODO add your handling code here:
+        tipoOperacion = TiposOperacion.MODIFICAR;
+        codigo.setEnabled(true);
     }//GEN-LAST:event_modificationsMaintenanceItemActionPerformed
+
+    private void codigoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_codigoKeyTyped
+        
+        if (evt.equals(KeyEvent.VK_ENTER) && codigo.getText().length() == 5) {
+            
+            switch (tipoOperacion) {
+                case ALTA -> {
+                    
+                    if (checkClientId()) {
+         
+                        JOptionPane.showConfirmDialog(this, 
+                    "El cliente que deseas añadir ya existe en la BBDD", "Error de duplicado", JOptionPane.CLOSED_OPTION);
+                        codigo.setText("");
+                        tipoOperacion = TiposOperacion.NO_SELECCIONADO;
+                    }
+                }
+                case BAJA, MODIFICAR -> {
+                    
+                    if (!checkClientId()) {
+         
+                        JOptionPane.showConfirmDialog(this, 
+                    "El cliente que deseas eliminar/modificar no existe en la BBDD", "Error", JOptionPane.CLOSED_OPTION);
+                        codigo.setText("");
+                        tipoOperacion = TiposOperacion.NO_SELECCIONADO;
+                    }
+                }
+                default -> System.out.println("No se ha insertado un código correcto.");
+            }
+        } else if (codigo.getText().length() >= 5) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_codigoKeyTyped
 
     /**
      * @param args the command line arguments
