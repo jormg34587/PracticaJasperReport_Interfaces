@@ -82,8 +82,9 @@ public class GestionAlmacen extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonClientesActionPerformed
-        GestionClientes gc = new GestionClientes();
+        GestionClientes gc = new GestionClientes(this, true);
         gc.setVisible(true);
+        
     }//GEN-LAST:event_botonClientesActionPerformed
 
     private void botonArticuloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonArticuloActionPerformed
