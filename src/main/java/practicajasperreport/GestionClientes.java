@@ -37,7 +37,7 @@ public class GestionClientes extends javax.swing.JFrame {
         }
         initComponents();
         setLocationRelativeTo(this);
-        setStateToFields(getCampos(), null, false);
+        setEnabledFields(getCampos(), null, false);
     }
         
     
@@ -49,7 +49,7 @@ public class GestionClientes extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     
     
-    private void setStateToFields(JTextField[] campos, JTextField excludedField, boolean state) {
+    private void setEnabledFields(JTextField[] campos, JTextField excludedField, boolean state) {
         
         for (JTextField field : campos) {
             
@@ -203,6 +203,9 @@ public class GestionClientes extends javax.swing.JFrame {
 
         codigo.setName("codigo"); // NOI18N
         codigo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                codigoKeyPressed(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 codigoKeyTyped(evt);
             }
@@ -504,6 +507,10 @@ public class GestionClientes extends javax.swing.JFrame {
             evt.consume();
         }
     }//GEN-LAST:event_codigoKeyTyped
+
+    private void codigoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_codigoKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_codigoKeyPressed
 
     /**
      * @param args the command line arguments
