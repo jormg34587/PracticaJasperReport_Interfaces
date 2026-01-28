@@ -39,6 +39,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Volver"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="returnMaintenanceItemActionPerformed"/>
+              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>
@@ -51,6 +54,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Por C&#xf3;digo"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sortByIdQueryItemActionPerformed"/>
+              </Events>
               <SubComponents>
                 <MenuItem class="javax.swing.JMenuItem" name="searchByIdItem">
                   <Properties>
@@ -61,6 +67,9 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Entre c&#xf3;digos"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="betweenIdsItemActionPerformed"/>
+                  </Events>
                 </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="chartItem">
                   <Properties>
@@ -290,10 +299,19 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="telefono">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="telefono" noResource="true"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="movil">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="movil" noResource="true"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="fax">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="fax" noResource="true"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel11">
       <Properties>

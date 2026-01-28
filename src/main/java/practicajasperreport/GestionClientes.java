@@ -11,6 +11,12 @@ import java.sql.Statement;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -55,50 +61,104 @@ public class GestionClientes extends javax.swing.JDialog {
      */
     @SuppressWarnings("unchecked")
     
-    private void calcularLetraDni() {
+    private ResultSet estadisticasPorCodigoPostal() throws SQLException {
 
-        String textoDni = dni.getText().trim();
+        String sql = "SELECT codigo_postal, COUNT(*) total " +
+                     "FROM clientes GROUP BY codigo_postal";
+        Statement st = con.createStatement();
+        return st.executeQuery(sql);
+    }
+    
+    private boolean calcularLetraDni() {
 
-        // Validar que no esté vacío y que sean números
-        if (textoDni.isEmpty() || !textoDni.matches("\\d+")) {
-            JOptionPane.showMessageDialog(this,
-                    "Introduce un DNI válido (solo números)",
+            String textoDni = dni.getText().trim();
+
+            // Validar que no esté vacío y que sean números
+            if (textoDni.isEmpty() || !textoDni.matches("\\d+")) {
+                JOptionPane.showMessageDialog(this,
+                        "Introduce un DNI válido (solo números)",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                letraDni.setText("");
+                tipoOperacion = TiposOperacion.NO_SELECCIONADO;
+                return false;
+
+            }
+
+            if (textoDni.length() != 8) {
+                JOptionPane.showMessageDialog(this,
+                    "El DNI debe tener 8 números",
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
-            letraDni.setText("");
-            return;
-        }
-        
-        if (textoDni.length() != 8) {
+                letraDni.setText("");
+                tipoOperacion = TiposOperacion.NO_SELECCIONADO;
+                return false;
+            }
+
+            int numeroDni;
+            try {
+                numeroDni = Integer.parseInt(textoDni);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this,
+                        "El DNI es demasiado grande",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                letraDni.setText("");
+                tipoOperacion = TiposOperacion.NO_SELECCIONADO;
+                return false;
+            }
+
+            // Letras del DNI
+            String letras = "TRWAGMYFPDXBNJZSQVHLCKE";
+            char letra = letras.charAt(numeroDni % 23);
+
+            letraDni.setText(String.valueOf(letra));
+            return true;
+    }
+    
+    private boolean validarCodigoPostal() {
+
+        if (!codigoPostal.getText().matches("\\d{5}")) {
             JOptionPane.showMessageDialog(this,
-                "El DNI debe tener 8 números",
+                "El código postal debe tener 5 números",
                 "Error",
                 JOptionPane.ERROR_MESSAGE);
-            letraDni.setText("");
-            return;
+            return false;
         }
 
-        int numeroDni;
-        try {
-            numeroDni = Integer.parseInt(textoDni);
-        } catch (NumberFormatException e) {
+        return true;
+    }
+    
+    private boolean validarTelefono(JTextField campo) {
+
+        if (campo.getText().isBlank()) return true;
+
+        if (!campo.getText().matches("\\d{9}")) {
             JOptionPane.showMessageDialog(this,
-                    "El DNI es demasiado grande",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
-            letraDni.setText("");
-            return;
+                campo.getName() + " debe tener 9 números",
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+            campo.grabFocus();
+            return false;
         }
 
-        // Tabla oficial de letras del DNI
-        String letras = "TRWAGMYFPDXBNJZSQVHLCKE";
+        return true;
+    }
+    
+    private boolean validarEmail() {
 
-        // Cálculo de la letra
-        char letra = letras.charAt(numeroDni % 23);
+        if (email.getText().isBlank()) return true;
 
-        // Mostrar resultado
-        letraDni.setText(String.valueOf(letra));
-}
+        if (!email.getText().matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
+            JOptionPane.showMessageDialog(this,
+                "El e-mail no es válido",
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        return true;
+    }
     
     private void setEnabledFields(JTextField[] campos, JTextField excludedField, boolean state) {
         
@@ -222,6 +282,7 @@ public class GestionClientes extends javax.swing.JDialog {
                 "Error al insertar el cliente",
                 "Error",
                 JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
         }
     }
     
@@ -390,6 +451,12 @@ public class GestionClientes extends javax.swing.JDialog {
 
         jLabel10.setText("Fax");
 
+        telefono.setName("telefono"); // NOI18N
+
+        movil.setName("movil"); // NOI18N
+
+        fax.setName("fax"); // NOI18N
+
         jLabel11.setText("E-mail");
 
         codigo.setName("codigo"); // NOI18N
@@ -471,6 +538,11 @@ public class GestionClientes extends javax.swing.JDialog {
         maintenanceMenu.add(jSeparator2);
 
         returnMaintenanceItem.setText("Volver");
+        returnMaintenanceItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                returnMaintenanceItemActionPerformed(evt);
+            }
+        });
         maintenanceMenu.add(returnMaintenanceItem);
 
         jMenuBar1.add(maintenanceMenu);
@@ -478,11 +550,21 @@ public class GestionClientes extends javax.swing.JDialog {
         queryMenu.setText("Consultas");
 
         sortByIdQueryItem.setText("Por Código");
+        sortByIdQueryItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sortByIdQueryItemActionPerformed(evt);
+            }
+        });
 
         searchByIdItem.setText("Por Código");
         sortByIdQueryItem.add(searchByIdItem);
 
         betweenIdsItem.setText("Entre códigos");
+        betweenIdsItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                betweenIdsItemActionPerformed(evt);
+            }
+        });
         sortByIdQueryItem.add(betweenIdsItem);
 
         chartItem.setText("Gráficos");
@@ -632,12 +714,29 @@ public class GestionClientes extends javax.swing.JDialog {
 
          switch (tipoOperacion) {
             case ALTA -> {
-                if (validarCamposAlta()) {
+                if (validarCamposAlta() &&
+                    calcularLetraDni() &&
+                    validarCodigoPostal() &&
+                    validarTelefono(telefono) &&
+                    validarTelefono(movil) &&
+                    validarTelefono(fax) &&
+                    validarEmail()) {
+
                     insertarCliente();
                 }
             }
             case BAJA -> borrarCliente();
-            case MODIFICAR -> modificarCliente();
+            case MODIFICAR -> {
+                if (calcularLetraDni() &&
+                    validarCodigoPostal() &&
+                    validarTelefono(telefono) &&
+                    validarTelefono(movil) &&
+                    validarTelefono(fax) &&
+                    validarEmail()) {
+
+                    modificarCliente();
+                }
+            }
             default -> {
                 JOptionPane.showMessageDialog(this,
                     "No hay ninguna operación seleccionada",
@@ -669,7 +768,7 @@ public class GestionClientes extends javax.swing.JDialog {
     }//GEN-LAST:event_botonSalirActionPerformed
 
     private void chartItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chartItemActionPerformed
-        // TODO add your handling code here:
+        mostrarGraficoClientes();
     }//GEN-LAST:event_chartItemActionPerformed
 
     private void registrationsMaintenanceItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registrationsMaintenanceItemActionPerformed
@@ -714,8 +813,7 @@ public class GestionClientes extends javax.swing.JDialog {
     private void codigoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_codigoKeyPressed
        
         if (evt.getKeyCode() == VK_ENTER && codigo.getText().length() == 5) {
-            System.out.println("Texto: [" + codigo.getText() + "] longitud=" + codigo.getText().length());
-            System.out.println(tipoOperacion);
+            
             switch (tipoOperacion) {
                 case ALTA -> {
                     
@@ -750,7 +848,12 @@ public class GestionClientes extends javax.swing.JDialog {
                             setEnabledFields(getCampos(), null, false);
                         }
 
-    }
+                    }
+                }
+                case NO_SELECCIONADO->{
+                
+                    cargarClientePorCodigo();
+                    setEnabledFields(getCampos(), null, false);
                 }
                 default -> System.out.println("No se ha insertado un código correcto.");
             }
@@ -761,6 +864,57 @@ public class GestionClientes extends javax.swing.JDialog {
         calcularLetraDni();
     }//GEN-LAST:event_dniActionPerformed
 
+    private void sortByIdQueryItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sortByIdQueryItemActionPerformed
+        tipoOperacion = TiposOperacion.NO_SELECCIONADO;
+
+        borrarCampos(getCampos());
+        cambiarColorCampos(getCampos(), Color.WHITE);
+
+        setEnabledFields(getCampos(), codigo, false);
+        codigo.setEnabled(true);
+        codigo.grabFocus();
+    }//GEN-LAST:event_sortByIdQueryItemActionPerformed
+
+    private void betweenIdsItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_betweenIdsItemActionPerformed
+        ListadoEntreCodigos dialog =
+         new ListadoEntreCodigos((Frame) this.getParent(), true, con);
+        dialog.setVisible(true);
+    }//GEN-LAST:event_betweenIdsItemActionPerformed
+
+    private void returnMaintenanceItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_returnMaintenanceItemActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_returnMaintenanceItemActionPerformed
+
+    private ResultSet listadoClientesPorCodigo() throws SQLException {
+
+        String sql = "SELECT * FROM clientes ORDER BY codigo";
+        Statement st = con.createStatement();
+        return st.executeQuery(sql);
+    }
+    
+    private void mostrarGraficoClientes() {
+
+        try {
+            JasperReport report = JasperCompileManager.compileReport(
+                getClass().getResourceAsStream("src/main/resources/jasper/GraficoClientesPorCP.jrxml")
+            );
+
+            JasperPrint print = JasperFillManager.fillReport(
+                report,
+                null,   // sin parámetros
+                con     // tu conexión JDBC
+            );
+
+            JasperViewer.viewReport(print, false);
+
+        } catch (JRException ex) {
+            JOptionPane.showMessageDialog(this,
+                "Error al generar el gráfico",
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
     /**
      * @param args the command line arguments
      */
