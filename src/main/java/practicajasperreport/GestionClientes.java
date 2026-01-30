@@ -8,6 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import net.sf.jasperreports.engine.JRException;
@@ -31,6 +33,7 @@ public class GestionClientes extends javax.swing.JDialog {
         BAJA,
         ALTA,
         MODIFICAR,
+        CONSULTA,
         NO_SELECCIONADO
     }
     TiposOperacion tipoOperacion = TiposOperacion.NO_SELECCIONADO;
@@ -435,10 +438,11 @@ public class GestionClientes extends javax.swing.JDialog {
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         returnMaintenanceItem = new javax.swing.JMenuItem();
         queryMenu = new javax.swing.JMenu();
-        sortByIdQueryItem = new javax.swing.JMenu();
-        searchByIdItem = new javax.swing.JMenuItem();
+        listingQueryItem = new javax.swing.JMenu();
+        sortByIdItem = new javax.swing.JMenuItem();
         betweenIdsItem = new javax.swing.JMenuItem();
         chartItem = new javax.swing.JMenuItem();
+        searchByIdItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -550,15 +554,15 @@ public class GestionClientes extends javax.swing.JDialog {
 
         queryMenu.setText("Consultas");
 
-        sortByIdQueryItem.setText("Por Código");
-        sortByIdQueryItem.addActionListener(new java.awt.event.ActionListener() {
+        listingQueryItem.setText("Listados");
+
+        sortByIdItem.setText("Por Código");
+        sortByIdItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sortByIdQueryItemActionPerformed(evt);
+                sortByIdItemActionPerformed(evt);
             }
         });
-
-        searchByIdItem.setText("Por Código");
-        sortByIdQueryItem.add(searchByIdItem);
+        listingQueryItem.add(sortByIdItem);
 
         betweenIdsItem.setText("Entre códigos");
         betweenIdsItem.addActionListener(new java.awt.event.ActionListener() {
@@ -566,7 +570,7 @@ public class GestionClientes extends javax.swing.JDialog {
                 betweenIdsItemActionPerformed(evt);
             }
         });
-        sortByIdQueryItem.add(betweenIdsItem);
+        listingQueryItem.add(betweenIdsItem);
 
         chartItem.setText("Gráficos");
         chartItem.addActionListener(new java.awt.event.ActionListener() {
@@ -574,9 +578,17 @@ public class GestionClientes extends javax.swing.JDialog {
                 chartItemActionPerformed(evt);
             }
         });
-        sortByIdQueryItem.add(chartItem);
+        listingQueryItem.add(chartItem);
 
-        queryMenu.add(sortByIdQueryItem);
+        queryMenu.add(listingQueryItem);
+
+        searchByIdItem.setText("Por código");
+        searchByIdItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchByIdItemActionPerformed(evt);
+            }
+        });
+        queryMenu.add(searchByIdItem);
 
         jMenuBar1.add(queryMenu);
 
@@ -758,10 +770,7 @@ public class GestionClientes extends javax.swing.JDialog {
         borrarCampos(getCampos());
         cambiarColorCampos(getCampos(), Color.WHITE);
         codigo.grabFocus();
-        tipoOperacion = TiposOperacion.NO_SELECCIONADO;
-        setEnabledFields(getCampos(), null, false);
-        codigo.setEnabled(false);
-
+        setEnabledFields(getCampos(), null, true);
     }//GEN-LAST:event_botonCancelarActionPerformed
 
     private void botonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonSalirActionPerformed
@@ -781,6 +790,7 @@ public class GestionClientes extends javax.swing.JDialog {
         setEnabledFields(getCampos(), codigo, false);
         codigo.setEnabled(true);
         codigo.grabFocus();
+        botonAceptar.setEnabled(true);
     }//GEN-LAST:event_registrationsMaintenanceItemActionPerformed
 
     private void cancellationsMaintenanceItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancellationsMaintenanceItemActionPerformed
@@ -790,6 +800,7 @@ public class GestionClientes extends javax.swing.JDialog {
         setEnabledFields(getCampos(), codigo, false);
         codigo.setEnabled(true);
         codigo.grabFocus();
+        botonAceptar.setEnabled(true);
     }//GEN-LAST:event_cancellationsMaintenanceItemActionPerformed
 
     private void modificationsMaintenanceItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificationsMaintenanceItemActionPerformed
@@ -799,6 +810,7 @@ public class GestionClientes extends javax.swing.JDialog {
         setEnabledFields(getCampos(), codigo, false);
         codigo.setEnabled(true);
         codigo.grabFocus();
+        botonAceptar.setEnabled(true);
     }//GEN-LAST:event_modificationsMaintenanceItemActionPerformed
 
     private void codigoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_codigoKeyTyped
@@ -834,7 +846,7 @@ public class GestionClientes extends javax.swing.JDialog {
                         dni.grabFocus();
     }
                 }
-                case BAJA, MODIFICAR -> {
+                case BAJA, MODIFICAR, CONSULTA -> {
                     
                     if (!checkClientId()) {
                         JOptionPane.showMessageDialog(this,
@@ -847,12 +859,18 @@ public class GestionClientes extends javax.swing.JDialog {
                         codigo.setEnabled(false);
                         total.setEnabled(false);
                         cargarClientePorCodigo();
-                        if (tipoOperacion == TiposOperacion.BAJA) {
+                        botonAceptar.setEnabled(true);
+                        if (tipoOperacion == TiposOperacion.BAJA || tipoOperacion == TiposOperacion.CONSULTA) {
                             setEnabledFields(getCampos(), null, false);
+                            if (tipoOperacion == TiposOperacion.CONSULTA) {
+                                botonAceptar.setEnabled(false);
+                            }
                         }
 
                     }
+                    
                 }
+              
                 case NO_SELECCIONADO->{
                 
                     cargarClientePorCodigo();
@@ -867,17 +885,6 @@ public class GestionClientes extends javax.swing.JDialog {
         calcularLetraDni();
     }//GEN-LAST:event_dniActionPerformed
 
-    private void sortByIdQueryItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sortByIdQueryItemActionPerformed
-        tipoOperacion = TiposOperacion.NO_SELECCIONADO;
-
-        borrarCampos(getCampos());
-        cambiarColorCampos(getCampos(), Color.WHITE);
-
-        setEnabledFields(getCampos(), codigo, false);
-        codigo.setEnabled(true);
-        codigo.grabFocus();
-    }//GEN-LAST:event_sortByIdQueryItemActionPerformed
-
     private void betweenIdsItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_betweenIdsItemActionPerformed
         ListadoEntreCodigos dialog =
          new ListadoEntreCodigos((Frame) this.getParent(), true, con);
@@ -888,6 +895,19 @@ public class GestionClientes extends javax.swing.JDialog {
         this.dispose();
     }//GEN-LAST:event_returnMaintenanceItemActionPerformed
 
+    private void searchByIdItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchByIdItemActionPerformed
+        tipoOperacion = TiposOperacion.CONSULTA;
+        borrarCampos(getCampos());
+        cambiarColorCampos(getCampos(), Color.WHITE);
+        setEnabledFields(getCampos(), codigo, false);
+        codigo.setEnabled(true);
+        codigo.grabFocus();
+    }//GEN-LAST:event_searchByIdItemActionPerformed
+
+    private void sortByIdItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sortByIdItemActionPerformed
+        mostrarListadoClientesPorCodigo();
+    }//GEN-LAST:event_sortByIdItemActionPerformed
+
     
     private void mostrarGraficoClientes() {
 
@@ -897,7 +917,9 @@ public class GestionClientes extends javax.swing.JDialog {
             JasperPrint print = JasperFillManager.fillReport(report,null,con);
 
             JasperExportManager.exportReportToPdfFile(print, "src\\main\\resources\\jasper\\GraficoClientesPorCP.pdf");
-
+            setModal(false);
+            JasperViewer.viewReport(print, false);
+            setModal(true);
         } catch (JRException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this,
@@ -906,6 +928,28 @@ public class GestionClientes extends javax.swing.JDialog {
                 JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    private void mostrarListadoClientesPorCodigo() {
+        try {
+            JasperReport report = (JasperReport) JRLoader.loadObjectFromFile(
+                    "src\\main\\resources\\jasper\\ListadoClientesPorCodigo.jasper");
+
+            JasperPrint print = JasperFillManager.fillReport(report, null, con);
+
+            setModal(false);
+            JasperViewer.viewReport(print, false);
+            setModal(true);
+        } catch (JRException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    "Error al generar el listado",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    
+
     
     /**
      * @param args the command line arguments
@@ -971,6 +1015,7 @@ public class GestionClientes extends javax.swing.JDialog {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JTextField letraDni;
+    private javax.swing.JMenu listingQueryItem;
     private javax.swing.JTextField localidad;
     private javax.swing.JMenu maintenanceMenu;
     private javax.swing.JMenuItem modificationsMaintenanceItem;
@@ -980,7 +1025,7 @@ public class GestionClientes extends javax.swing.JDialog {
     private javax.swing.JMenuItem registrationsMaintenanceItem;
     private javax.swing.JMenuItem returnMaintenanceItem;
     private javax.swing.JMenuItem searchByIdItem;
-    private javax.swing.JMenu sortByIdQueryItem;
+    private javax.swing.JMenuItem sortByIdItem;
     private javax.swing.JTextField telefono;
     private javax.swing.JTextField total;
     // End of variables declaration//GEN-END:variables
