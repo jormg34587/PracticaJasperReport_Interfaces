@@ -36,10 +36,10 @@ ORDER BY codigo_postal;]]>
 		<band splitType="Stretch"/>
 	</pageFooter>
 	<summary>
-		<band height="101" splitType="Stretch">
-			<pieChart>
+		<band height="300" splitType="Stretch">
+			<pie3DChart>
 				<chart>
-					<reportElement x="162" y="0" width="200" height="100" uuid="adb3d29d-1951-44f5-aba7-e24666d985d0"/>
+					<reportElement x="50" y="0" width="450" height="280" uuid="e1d5ce23-9561-48c8-9249-0c43ed8202bb"/>
 					<chartTitle/>
 					<chartSubtitle/>
 					<chartLegend/>
@@ -48,11 +48,11 @@ ORDER BY codigo_postal;]]>
 					<keyExpression><![CDATA[$F{codigo_postal}]]></keyExpression>
 					<valueExpression><![CDATA[$F{total}]]></valueExpression>
 				</pieDataset>
-				<piePlot>
+				<pie3DPlot>
 					<plot/>
 					<itemLabel/>
-				</piePlot>
-			</pieChart>
+				</pie3DPlot>
+			</pie3DChart>
 		</band>
 	</summary>
 </jasperReport>

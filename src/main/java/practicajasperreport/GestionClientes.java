@@ -8,14 +8,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.view.JasperViewer;
 
 /**
@@ -764,7 +765,9 @@ public class GestionClientes extends javax.swing.JDialog {
     }//GEN-LAST:event_botonCancelarActionPerformed
 
     private void botonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonSalirActionPerformed
-        this.dispose();
+        codigo.grabFocus();
+        tipoOperacion = TiposOperacion.NO_SELECCIONADO;
+        setEnabledFields(getCampos(), null, false);
     }//GEN-LAST:event_botonSalirActionPerformed
 
     private void chartItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chartItemActionPerformed
@@ -885,29 +888,18 @@ public class GestionClientes extends javax.swing.JDialog {
         this.dispose();
     }//GEN-LAST:event_returnMaintenanceItemActionPerformed
 
-    private ResultSet listadoClientesPorCodigo() throws SQLException {
-
-        String sql = "SELECT * FROM clientes ORDER BY codigo";
-        Statement st = con.createStatement();
-        return st.executeQuery(sql);
-    }
     
     private void mostrarGraficoClientes() {
 
         try {
-            JasperReport report = JasperCompileManager.compileReport(
-                getClass().getResourceAsStream("src/main/resources/jasper/GraficoClientesPorCP.jrxml")
-            );
+            JasperReport report = (JasperReport)JRLoader.loadObjectFromFile("src\\main\\resources\\jasper\\GraficoClientesPorCP.jasper");
 
-            JasperPrint print = JasperFillManager.fillReport(
-                report,
-                null,   // sin parámetros
-                con     // tu conexión JDBC
-            );
+            JasperPrint print = JasperFillManager.fillReport(report,null,con);
 
-            JasperViewer.viewReport(print, false);
+            JasperExportManager.exportReportToPdfFile(print, "src\\main\\resources\\jasper\\GraficoClientesPorCP.pdf");
 
         } catch (JRException ex) {
+            ex.printStackTrace();
             JOptionPane.showMessageDialog(this,
                 "Error al generar el gráfico",
                 "Error",
