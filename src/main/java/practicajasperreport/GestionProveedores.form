@@ -50,18 +50,18 @@
             <Property name="text" type="java.lang.String" value="Consultas"/>
           </Properties>
           <SubComponents>
-            <Menu class="javax.swing.JMenu" name="sortByIdQueryItem">
+            <Menu class="javax.swing.JMenu" name="listingQueryItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Por C&#xf3;digo"/>
+                <Property name="text" type="java.lang.String" value="Listados"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sortByIdQueryItemActionPerformed"/>
-              </Events>
               <SubComponents>
-                <MenuItem class="javax.swing.JMenuItem" name="searchByIdItem">
+                <MenuItem class="javax.swing.JMenuItem" name="sortByIdItem">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Por C&#xf3;digo"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sortByIdItemActionPerformed"/>
+                  </Events>
                 </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="betweenIdsItem">
                   <Properties>
@@ -81,6 +81,14 @@
                 </MenuItem>
               </SubComponents>
             </Menu>
+            <MenuItem class="javax.swing.JMenuItem" name="searchByIdItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Por c&#xf3;digo"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="searchByIdItemActionPerformed"/>
+              </Events>
+            </MenuItem>
           </SubComponents>
         </Menu>
       </SubComponents>

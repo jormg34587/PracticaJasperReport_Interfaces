@@ -41,7 +41,7 @@ public class ListadoEntreCodigos extends javax.swing.JDialog {
     private void mostrarListadoClientesEntreCodigos(int codigoDesde, int codigoHasta) {
         try {
             JasperReport report = (JasperReport) JRLoader.loadObjectFromFile(
-                    "src\\main\\resources\\jasper\\ListadoClientesPorCodigo.jasper");
+                    "src\\main\\resources\\jasper\\ListadoClientesEntreCodigos.jasper");
 
             Map<String, Object> params = new HashMap<>();
             params.put("CodigoDesde", codigoDesde);
@@ -49,7 +49,7 @@ public class ListadoEntreCodigos extends javax.swing.JDialog {
 
             JasperPrint print = JasperFillManager.fillReport(report, params, con);
 
-            JasperViewer.viewReport(print, false);
+            JasperViewer.viewReport(print, true);
 
         } catch (JRException ex) {
             ex.printStackTrace();

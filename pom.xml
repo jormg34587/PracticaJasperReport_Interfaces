@@ -33,5 +33,10 @@
             <version>5.0.3</version>
             <type>pom</type>
         </dependency>
+        <dependency>
+            <groupId>org.netbeans.external</groupId>
+            <artifactId>AbsoluteLayout</artifactId>
+            <version>RELEASE180</version>
+        </dependency>
     </dependencies>
 </project>

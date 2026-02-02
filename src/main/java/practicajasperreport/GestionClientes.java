@@ -228,7 +228,7 @@ public class GestionClientes extends javax.swing.JDialog {
                 fax.setText(rs.getString("fax"));
                 email.setText(rs.getString("email"));
                 total.setText(String.valueOf(rs.getFloat("total")));
-            }
+            } 
 
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this,
@@ -918,8 +918,7 @@ public class GestionClientes extends javax.swing.JDialog {
 
             JasperExportManager.exportReportToPdfFile(print, "src\\main\\resources\\jasper\\GraficoClientesPorCP.pdf");
             setModal(false);
-            JasperViewer.viewReport(print, false);
-            setModal(true);
+            JasperViewer.viewReport(print, true);
         } catch (JRException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this,
@@ -937,8 +936,7 @@ public class GestionClientes extends javax.swing.JDialog {
             JasperPrint print = JasperFillManager.fillReport(report, null, con);
 
             setModal(false);
-            JasperViewer.viewReport(print, false);
-            setModal(true);
+            JasperViewer.viewReport(print, true);
         } catch (JRException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this,

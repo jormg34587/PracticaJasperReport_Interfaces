@@ -88,12 +88,12 @@ public class GestionAlmacen extends javax.swing.JFrame {
     }//GEN-LAST:event_botonClientesActionPerformed
 
     private void botonArticuloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonArticuloActionPerformed
-        GestionArticulos gArt = new GestionArticulos();
+        GestionArticulos gArt = new GestionArticulos(this, true);
         gArt.setVisible(true);
     }//GEN-LAST:event_botonArticuloActionPerformed
 
     private void botonProveedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonProveedorActionPerformed
-        GestionProveedores gProv = new GestionProveedores();
+        GestionProveedores gProv = new GestionProveedores(this, true);
         gProv.setVisible(true);
     }//GEN-LAST:event_botonProveedorActionPerformed
 
