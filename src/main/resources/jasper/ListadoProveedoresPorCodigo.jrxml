@@ -26,7 +26,7 @@
 		<band height="70" splitType="Stretch">
 			<image>
 				<reportElement x="275" y="0" width="300" height="64" uuid="52a7c398-5111-4de1-a8ac-fd014ede1ba5"/>
-				<imageExpression><![CDATA["leaf_banner_violet.png"]]></imageExpression>
+				<imageExpression><![CDATA["src/main/resources/jasper/leaf_banner_violet.png"]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement style="Title" x="0" y="13" width="263" height="33" uuid="695b384f-68b0-411d-92b7-b9fa081c0878"/>
