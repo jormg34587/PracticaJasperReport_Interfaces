@@ -17,6 +17,7 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.view.JasperViewer;
+import practicajasperreport.ListadoEntreCodigos.Tabla;
 
 /**
  *
@@ -887,8 +888,7 @@ public class GestionClientes extends javax.swing.JDialog {
     }//GEN-LAST:event_dniActionPerformed
 
     private void betweenIdsItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_betweenIdsItemActionPerformed
-        ListadoEntreCodigos dialog =
-         new ListadoEntreCodigos((Frame) this.getParent(), true, con);
+        ListadoEntreCodigos dialog = new ListadoEntreCodigos((Frame) this.getParent(), true, con, Tabla.CLIENTES);
         dialog.setVisible(true);
     }//GEN-LAST:event_betweenIdsItemActionPerformed
 
@@ -931,7 +931,7 @@ public class GestionClientes extends javax.swing.JDialog {
 
             JasperPrint print = JasperFillManager.fillReport(report, null, con);
 
-            JasperExportManager.exportReportToPdfFile(print, "src\\main\\resources\\jasper\\GraficoClientesPorCodigo.pdf");
+            JasperExportManager.exportReportToPdfFile(print, "src\\main\\resources\\jasper\\ListadoClientesPorCodigo.pdf");
             setModal(false);
             JasperViewer.viewReport(print, true);
         } catch (JRException ex) {

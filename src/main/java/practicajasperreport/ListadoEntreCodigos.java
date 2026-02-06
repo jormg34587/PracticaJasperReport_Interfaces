@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JOptionPane;
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
@@ -22,6 +23,12 @@ import net.sf.jasperreports.view.JasperViewer;
 public class ListadoEntreCodigos extends javax.swing.JDialog {
 
     Connection con;
+    static enum Tabla  {
+        CLIENTES,
+        PROVEEDORES,
+        ARTICULOS
+    }
+    Tabla tabla = null;
     
     /**
      * Creates new form ListadoEntreCodigos
@@ -31,25 +38,46 @@ public class ListadoEntreCodigos extends javax.swing.JDialog {
         initComponents();
     }
     
-    public ListadoEntreCodigos(java.awt.Frame parent, boolean modal, Connection con) {
+    public ListadoEntreCodigos(java.awt.Frame parent, boolean modal, Connection con, Tabla tabla) {
         super(parent, modal);
         initComponents();
         this.con = con;
         setLocationRelativeTo(parent);
+        this.tabla = tabla; 
     }
     
-    private void mostrarListadoClientesEntreCodigos(int codigoDesde, int codigoHasta) {
+    private void mostrarListadoEntreCodigos(int codigoDesde, int codigoHasta, Tabla tabla) {
         try {
-            JasperReport report = (JasperReport) JRLoader.loadObjectFromFile(
+            
+            String pdfDestino = "";
+            JasperReport report = null;
+            switch (tabla) {
+                case Tabla.CLIENTES -> {
+                    report = (JasperReport) JRLoader.loadObjectFromFile(
                     "src\\main\\resources\\jasper\\ListadoClientesEntreCodigos.jasper");
+                    pdfDestino = "src\\main\\resources\\jasper\\ListadoClientesEntreCodigos.pdf";
+                }
+                case Tabla.PROVEEDORES -> {
+                     report = (JasperReport) JRLoader.loadObjectFromFile(
+                    "src\\main\\resources\\jasper\\ListadoProveedoresEntreCodigos.jasper");
+                     pdfDestino = "src\\main\\resources\\jasper\\ListadoProveedoresEntreCodigos.pdf";
+                }
+                case Tabla.ARTICULOS -> {
+                     report = (JasperReport) JRLoader.loadObjectFromFile(
+                    "src\\main\\resources\\jasper\\ListadoArticulosEntreCodigos.jasper");
+                     pdfDestino = "src\\main\\resources\\jasper\\ListadoArticulosEntreCodigos.pdf";
+                }
+            }
+           
 
             Map<String, Object> params = new HashMap<>();
-            params.put("CodigoDesde", codigoDesde);
-            params.put("CodigoHasta", codigoHasta);
+            params.put("codigoDesde", codigoDesde);
+            params.put("codigoHasta", codigoHasta);
 
             JasperPrint print = JasperFillManager.fillReport(report, params, con);
 
             JasperViewer.viewReport(print, true);
+            JasperExportManager.exportReportToPdfFile(print, pdfDestino);
 
         } catch (JRException ex) {
             ex.printStackTrace();
@@ -128,8 +156,7 @@ public class ListadoEntreCodigos extends javax.swing.JDialog {
     private void confirmButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmButtonActionPerformed
         
         if (!codigoDesde.getText().isBlank() && !codigoHasta.getText().isBlank()) {
-            mostrarListadoClientesEntreCodigos(Integer.parseInt(codigoDesde.getText()),
-                    Integer.parseInt(codigoHasta.getText()));
+            mostrarListadoEntreCodigos(Integer.parseInt(codigoDesde.getText()), Integer.parseInt(codigoHasta.getText()), this.tabla);
         } else {
             JOptionPane.showMessageDialog(this, "Los campos deben estar llenos",
                     "Error de validación", JOptionPane.ERROR_MESSAGE);
