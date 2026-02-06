@@ -911,6 +911,7 @@ public class GestionProveedores extends javax.swing.JDialog {
             JasperReport report = (JasperReport)JRLoader.loadObjectFromFile("src/main/resources/jasper/GraficoProveedoresPorCP.jasper");
             JasperPrint print = JasperFillManager.fillReport(report,null,con);
             setModal(false);
+            JasperExportManager.exportReportToPdfFile(print, "src\\main\\resources\\jasper\\GraficoProveedoresPorCP.pdf");
             JasperViewer.viewReport(print, true);
         } catch (JRException ex) {
             ex.printStackTrace();
@@ -927,6 +928,7 @@ public class GestionProveedores extends javax.swing.JDialog {
                     "src/main/resources/jasper/ListadoProveedoresPorCodigo.jasper");
             JasperPrint print = JasperFillManager.fillReport(report, null, con);
             setModal(false);
+            JasperExportManager.exportReportToPdfFile(print, "src\\main\\resources\\jasper\\GraficoProveedoresPorCodigo.pdf");
             JasperViewer.viewReport(print, true);
         } catch (JRException ex) {
             ex.printStackTrace();

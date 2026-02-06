@@ -633,8 +633,10 @@ public class GestionArticulos extends javax.swing.JDialog {
 
             JasperPrint print = JasperFillManager.fillReport(report, null, con);
 
+            JasperExportManager.exportReportToPdfFile(print, "src\\main\\resources\\jasper\\GraficoArticulosPorCodigo.pdf");
             setModal(false);
             JasperViewer.viewReport(print, true);
+            
         } catch (JRException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this,
