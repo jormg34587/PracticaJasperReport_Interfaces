@@ -23,7 +23,7 @@ import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
- * @author ChatGPT, Copilot, Gemini, Grok, DeepSeek, Llama, Perplexity
+ * @author yo
  */
 public class GestionArticulos extends javax.swing.JDialog {
 
@@ -90,33 +90,29 @@ public class GestionArticulos extends javax.swing.JDialog {
 
     }
     
-    private boolean checkClientId() {
-    
+    private boolean checkArticuloId() {
         try {
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery("SELECT codigo FROM articulos WHERE codigo = " + codigo.getText());
-            
+
             if (rs.next()) {
                 return true;
-            } 
+            }
         } catch (SQLException ex) {
-            JOptionPane.showConfirmDialog(this, 
+            JOptionPane.showConfirmDialog(this,
                     "Error de consulta con la BBDD", "Error en la consulta", JOptionPane.CLOSED_OPTION);
         }
-        
         return false;
     }
 
-    private void cargarClientePorCodigo() {
-
-        String sql = "SELECT codigo, descripcion, precio_venta, precio_compra, stock, stock_minimo" +
+    private void cargarArticuloPorCodigo() {
+        String sql = "SELECT codigo, descripcion, precio_venta, precio_compra, stock, stock_minimo " +
                      "FROM articulos WHERE codigo = " + codigo.getText();
 
         try (Statement st = con.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
 
             if (rs.next()) {
-
                 descripcion.setText(rs.getString("descripcion"));
                 stock.setText("" + rs.getFloat("stock"));
                 stockMinimo.setText("" + rs.getFloat("stock_minimo"));
@@ -126,14 +122,13 @@ public class GestionArticulos extends javax.swing.JDialog {
 
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this,
-                    "Error al cargar el cliente",
+                    "Error al cargar el artículo",
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
     }
     
     private boolean validarCamposAlta() {
-
         if (descripcion.getText().isBlank() ||
             stock.getText().isBlank() ||
             stockMinimo.getText().isBlank() ||
@@ -141,20 +136,18 @@ public class GestionArticulos extends javax.swing.JDialog {
             precioVenta.getText().isBlank()) {
 
             JOptionPane.showMessageDialog(this,
-                "Rellena todos los campos obligatorios",
-                "Error",
-                JOptionPane.ERROR_MESSAGE);
+                    "Rellena todos los campos obligatorios",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
         return true;
     }
     
-    private void insertarCliente() {
-
+    private void insertarArticulo() {
         String sql = "INSERT INTO articulos " +
-            "(codigo, descripcion, stock, stock_minimo, precio_venta, precio_compra) VALUES (" +
-            "?, ?, ?, ?, ?, ?)";
+                "(codigo, descripcion, stock, stock_minimo, precio_venta, precio_compra) VALUES (" +
+                "?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -166,21 +159,21 @@ public class GestionArticulos extends javax.swing.JDialog {
             ps.setFloat(6, Float.parseFloat(precioCompra.getText()));
 
             ps.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Artículo insertado correctamente.");
 
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this,
-                "Error al insertar el cliente",
-                "Error",
-                JOptionPane.ERROR_MESSAGE);
-                ex.printStackTrace();
+                    "Error al insertar el artículo",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
         }
     }
     
-    private void modificarCliente() {
-
+    private void modificarArticulo() {
         String sql = "UPDATE articulos SET " +
-            "descripcion = ?, stock = ?, stock_minimo = ?, precio_venta = ?, precio_compra = ?" +
-            "WHERE codigo = ?";
+                "descripcion = ?, stock = ?, stock_minimo = ?, precio_venta = ?, precio_compra = ? " +
+                "WHERE codigo = ?";
 
         try (var ps = con.prepareStatement(sql)) {
 
@@ -192,36 +185,37 @@ public class GestionArticulos extends javax.swing.JDialog {
             ps.setInt(6, Integer.parseInt(codigo.getText()));
 
             ps.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Artículo modificado correctamente.");
 
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this,
-                "Error al modificar el artículo",
-                "Error",
-                JOptionPane.ERROR_MESSAGE);
+                    "Error al modificar el artículo",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
     
-    private void borrarCliente() {
-
+    private void borrarArticulo() {
         int opcion = JOptionPane.showConfirmDialog(this,
-            "¿Seguro que deseas eliminar el artículo?",
-            "Confirmación",
-            JOptionPane.YES_NO_OPTION);
+                "¿Seguro que deseas eliminar el artículo?",
+                "Confirmación",
+                JOptionPane.YES_NO_OPTION);
 
         if (opcion != JOptionPane.YES_OPTION) return;
 
-        String sql = "DELETE FROM clientes WHERE codigo = ?";
+        // Corrección: Tabla articulos
+        String sql = "DELETE FROM articulos WHERE codigo = ?";
 
         try (var ps = con.prepareStatement(sql)) {
-
             ps.setInt(1, Integer.parseInt(codigo.getText()));
             ps.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Artículo eliminado correctamente.");
 
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this,
-                "Error al eliminar el artículo",
-                "Error",
-                JOptionPane.ERROR_MESSAGE);
+                    "Error al eliminar el artículo",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -441,44 +435,32 @@ public class GestionArticulos extends javax.swing.JDialog {
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
 
-         switch (tipoOperacion) {
+        switch (tipoOperacion) {
             case ALTA -> {
-                if (validarCamposAlta() &&
-                    calcularLetraDni() &&
-                    validarCodigoPostal() &&
-                    validarTelefono(telefono) &&
-                    validarTelefono(stock) &&
-                    validarTelefono(stockMinimo) &&
-                    validarEmail()) {
-
-                    insertarCliente();
+                // Eliminadas validaciones de DNI, teléfono, etc.
+                if (validarCamposAlta()) {
+                    insertarArticulo();
                 }
             }
-            case BAJA -> borrarCliente();
+            case BAJA -> borrarArticulo();
             case MODIFICAR -> {
-                if (calcularLetraDni() &&
-                    validarCodigoPostal() &&
-                    validarTelefono(telefono) &&
-                    validarTelefono(stock) &&
-                    validarTelefono(stockMinimo) &&
-                    validarEmail()) {
-
-                    modificarCliente();
+                if (validarCamposAlta()) {
+                    modificarArticulo();
                 }
             }
             default -> {
                 JOptionPane.showMessageDialog(this,
-                    "No hay ninguna operación seleccionada",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+                        "No hay ninguna operación seleccionada",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
-        
-         borrarCampos(getCampos());
+
         cambiarColorCampos(getCampos(), Color.WHITE);
         setEnabledFields(getCampos(), null, false);
         codigo.setEnabled(false);
         tipoOperacion = TiposOperacion.NO_SELECCIONADO;
+        
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCancelarActionPerformed
@@ -539,58 +521,52 @@ public class GestionArticulos extends javax.swing.JDialog {
 
     private void codigoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_codigoKeyPressed
        
-        if (evt.getKeyCode() == VK_ENTER && codigo.getText().length() == 5) {
-            
+         if (evt.getKeyCode() == VK_ENTER && codigo.getText().length() == 5) { // Permitimos longitud variable o ajusta a 5 si es estricto
+
             switch (tipoOperacion) {
                 case ALTA -> {
-                    
-                    if (checkClientId()) {
+                    if (checkArticuloId()) {
                         JOptionPane.showMessageDialog(this,
-                            "El cliente ya existe",
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
+                                "El artículo ya existe",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE);
                         codigo.setText("");
                     } else {
                         setEnabledFields(getCampos(), codigo, true);
                         codigo.setEnabled(false);
-                        total.setText("0");
-                        total.setEnabled(false);
-                        dni.grabFocus();
-    }
+                        // El foco pasa a descripción, ya no hay DNI
+                        descripcion.grabFocus();
+                    }
                 }
                 case BAJA, MODIFICAR, CONSULTA -> {
-                    
-                    if (!checkClientId()) {
+                    if (!checkArticuloId()) {
                         JOptionPane.showMessageDialog(this,
-                            "El cliente no existe",
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
+                                "El artículo no existe",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE);
                         codigo.setText("");
                     } else {
                         setEnabledFields(getCampos(), codigo, true);
                         codigo.setEnabled(false);
-                        total.setEnabled(false);
-                        cargarClientePorCodigo();
+                        
+                        cargarArticuloPorCodigo();
                         botonAceptar.setEnabled(true);
+                        
                         if (tipoOperacion == TiposOperacion.BAJA || tipoOperacion == TiposOperacion.CONSULTA) {
                             setEnabledFields(getCampos(), null, false);
                             if (tipoOperacion == TiposOperacion.CONSULTA) {
                                 botonAceptar.setEnabled(false);
                             }
                         }
-
                     }
-                    
                 }
-              
-                case NO_SELECCIONADO->{
-                
-                    cargarClientePorCodigo();
+                case NO_SELECCIONADO -> {
+                    cargarArticuloPorCodigo();
                     setEnabledFields(getCampos(), null, false);
                 }
                 default -> System.out.println("No se ha insertado un código correcto.");
             }
-        } 
+        }
     }//GEN-LAST:event_codigoKeyPressed
 
     private void betweenIdsItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_betweenIdsItemActionPerformed
@@ -613,7 +589,7 @@ public class GestionArticulos extends javax.swing.JDialog {
     }//GEN-LAST:event_searchByIdItemActionPerformed
 
     private void sortByIdItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sortByIdItemActionPerformed
-        mostrarListadoClientesPorCodigo();
+        mostrarListadoArticulosPorCodigo();
     }//GEN-LAST:event_sortByIdItemActionPerformed
 
     private void stockKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_stockKeyTyped
@@ -649,29 +625,11 @@ public class GestionArticulos extends javax.swing.JDialog {
     }//GEN-LAST:event_precioVentaKeyTyped
 
     
-    private void mostrarGraficoClientes() {
-
+    private void mostrarListadoArticulosPorCodigo() {
         try {
-            JasperReport report = (JasperReport)JRLoader.loadObjectFromFile("src\\main\\resources\\jasper\\GraficoClientesPorCP.jasper");
-
-            JasperPrint print = JasperFillManager.fillReport(report,null,con);
-
-            JasperExportManager.exportReportToPdfFile(print, "src\\main\\resources\\jasper\\GraficoClientesPorCP.pdf");
-            setModal(false);
-            JasperViewer.viewReport(print, true);
-        } catch (JRException ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this,
-                "Error al generar el gráfico",
-                "Error",
-                JOptionPane.ERROR_MESSAGE);
-        }
-    }
-    
-    private void mostrarListadoClientesPorCodigo() {
-        try {
+           
             JasperReport report = (JasperReport) JRLoader.loadObjectFromFile(
-                    "src\\main\\resources\\jasper\\ListadoClientesPorCodigo.jasper");
+                    "src/main/resources/jasper/ListadoArticulosPorCodigo.jasper");
 
             JasperPrint print = JasperFillManager.fillReport(report, null, con);
 
@@ -714,6 +672,12 @@ public class GestionArticulos extends javax.swing.JDialog {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(GestionArticulos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
