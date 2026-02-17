@@ -1,5 +1,5 @@
 CREATE TABLE clientes(
-    codigo INT,
+    codigo INT PRIMARY KEY,
     dni VARCHAR(9),
     apellidos VARCHAR(35),
     nombre VARCHAR(15),
@@ -14,7 +14,7 @@ CREATE TABLE clientes(
 );
 
 CREATE TABLE proveedores(
-    codigo INT,
+    codigo INT PRIMARY KEY,
     dni VARCHAR(9),
     apellidos VARCHAR(35),
     nombre VARCHAR(15),
@@ -29,13 +29,29 @@ CREATE TABLE proveedores(
 );
 
 CREATE TABLE articulos(
-    codigo INT,
+    codigo INT PRIMARY KEY,
     descripcion VARCHAR(25),
     stock FLOAT,
     stock_minimo FLOAT,
     stock_maximo FLOAT,
     precio_venta FLOAT,
     precio_compra FLOAT
+);
+
+CREATE TABLE pedidos_clientes (
+    id SERIAL PRIMARY KEY,
+    codigo_cliente INT REFERENCES clientes(codigo),
+    codigo_articulo INT REFERENCES articulos(codigo),
+    unidades FLOAT,
+    fecha DATE
+);
+
+CREATE TABLE pedidos_proveedores (
+    id SERIAL PRIMARY KEY,
+    codigo_proveedor INT REFERENCES proveedores(codigo),
+    codigo_articulo INT REFERENCES articulos(codigo),
+    unidades FLOAT,
+    fecha DATE
 );
 
 -- =====================================
