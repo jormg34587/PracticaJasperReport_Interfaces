@@ -40,6 +40,7 @@ public class GestionPedidos extends javax.swing.JDialog {
         }
         setLocationRelativeTo(parent);
         initComponents();
+        estadoInicial();
     }
     
     private enum TiposOperacion {
@@ -48,6 +49,38 @@ public class GestionPedidos extends javax.swing.JDialog {
                                 PROVEEDOR
     }
 
+    private void estadoInicial() {
+
+        tipoOperacion = TiposOperacion.NO_SELECCIONADO;
+
+        codigo.setEnabled(false);
+        dni.setEnabled(false);
+        letraDni.setEnabled(false);
+        nombre.setEnabled(false);
+        apellidos.setEnabled(false);
+        direccion.setEnabled(false);
+        codigoPostal.setEnabled(false);
+        localidad.setEnabled(false);
+        total.setEnabled(false);
+
+
+        nombreArticulo.setEnabled(false);
+        descripcion.setEnabled(false);
+        unidades.setEnabled(false);
+        stock.setEnabled(false);
+        precio.setEnabled(false);
+        importe.setEnabled(false);
+
+
+        aceptarButton.setEnabled(false);
+        cancelButton.setEnabled(false);
+        cancelEverythingButton.setEnabled(false);
+        facturaButton.setEnabled(false);
+        exitButton.setEnabled(false);
+
+        limpiarTodo();
+    }
+    
     private void cargarDatosEntidad(java.sql.ResultSet rs) throws SQLException {
 
         dni.setText(rs.getString("dni").substring(0,8));
@@ -68,7 +101,6 @@ public class GestionPedidos extends javax.swing.JDialog {
         precio.setText("");
         importe.setText("");
 
-        nombreArticulo.setEnabled(true);
         unidades.setEnabled(false);
     }
     
@@ -455,9 +487,22 @@ public class GestionPedidos extends javax.swing.JDialog {
 
                     if (rs.next()) {
                         cargarDatosEntidad(rs);
+
                         codigo.setEnabled(false);
+
+           
+                        dni.setEnabled(false);
+                        nombre.setEnabled(false);
+                        apellidos.setEnabled(false);
+                        direccion.setEnabled(false);
+                        codigoPostal.setEnabled(false);
+                        localidad.setEnabled(false);
+                        total.setEnabled(false);
+
+               
                         nombreArticulo.setEnabled(true);
                         nombreArticulo.grabFocus();
+
                         cancelEverythingButton.setEnabled(true);
                     } else {
                         JOptionPane.showMessageDialog(this, "Cliente no existe");
@@ -472,8 +517,20 @@ public class GestionPedidos extends javax.swing.JDialog {
                     if (rs.next()) {
                         cargarDatosEntidad(rs);
                         codigo.setEnabled(false);
+
+                       
+                        dni.setEnabled(false);
+                        nombre.setEnabled(false);
+                        apellidos.setEnabled(false);
+                        direccion.setEnabled(false);
+                        codigoPostal.setEnabled(false);
+                        localidad.setEnabled(false);
+                        total.setEnabled(false);
+
+                      
                         nombreArticulo.setEnabled(true);
                         nombreArticulo.grabFocus();
+
                         cancelEverythingButton.setEnabled(true);
                     } else {
                         JOptionPane.showMessageDialog(this, "Proveedor no existe");
@@ -506,20 +563,25 @@ public class GestionPedidos extends javax.swing.JDialog {
         tipoOperacion = TiposOperacion.PROVEEDOR;
     
         limpiarTodo();
-        habilitarInicio();
+        codigo.setEnabled(true);
+        codigo.grabFocus();
+
+        exitButton.setEnabled(true);
 
         facturaButton.setText("Finalizar");
-        facturaButton.setEnabled(false);
     }//GEN-LAST:event_proveedoresButtonActionPerformed
 
     private void clientesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clientesButtonActionPerformed
         tipoOperacion = TiposOperacion.CLIENTE;
     
         limpiarTodo();
-        habilitarInicio();
+
+        codigo.setEnabled(true);
+        codigo.grabFocus();
+
+        exitButton.setEnabled(true);
 
         facturaButton.setText("Factura");
-        facturaButton.setEnabled(false);
     }//GEN-LAST:event_clientesButtonActionPerformed
 
     private void returnButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_returnButtonActionPerformed
@@ -581,6 +643,7 @@ public class GestionPedidos extends javax.swing.JDialog {
             importeActual = unidadesPedidas * precioActual;
             importe.setText(String.valueOf(importeActual));
 
+            importe.setEnabled(false);
             unidades.setEnabled(false);
             aceptarButton.setEnabled(true);
 
@@ -670,11 +733,11 @@ public class GestionPedidos extends javax.swing.JDialog {
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
         try {
             con.rollback();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
+       } catch (SQLException ex) {
+           ex.printStackTrace();
+       }
 
-        this.dispose();
+       estadoInicial();
     }//GEN-LAST:event_exitButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
@@ -689,8 +752,7 @@ public class GestionPedidos extends javax.swing.JDialog {
             ex.printStackTrace();
         }
 
-        limpiarTodo();
-        habilitarInicio();
+        estadoInicial();
     }//GEN-LAST:event_cancelEverythingButtonActionPerformed
 
     /**
