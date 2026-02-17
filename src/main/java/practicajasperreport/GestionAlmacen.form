@@ -29,6 +29,7 @@
                   <Component id="botonProveedor" max="32767" attributes="0"/>
                   <Component id="botonClientes" alignment="1" max="32767" attributes="0"/>
                   <Component id="botonArticulo" alignment="1" max="32767" attributes="0"/>
+                  <Component id="pedidosButton" alignment="1" max="32767" attributes="0"/>
               </Group>
               <EmptySpace pref="153" max="32767" attributes="0"/>
           </Group>
@@ -43,7 +44,9 @@
               <Component id="botonProveedor" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="botonArticulo" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="144" max="32767" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="pedidosButton" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="99" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -71,6 +74,14 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="botonArticuloActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="pedidosButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Almac&#xe9;n"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pedidosButtonActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

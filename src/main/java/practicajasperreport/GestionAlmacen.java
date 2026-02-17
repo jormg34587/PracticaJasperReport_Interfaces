@@ -30,6 +30,7 @@ public class GestionAlmacen extends javax.swing.JFrame {
         botonClientes = new javax.swing.JButton();
         botonProveedor = new javax.swing.JButton();
         botonArticulo = new javax.swing.JButton();
+        pedidosButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -54,6 +55,13 @@ public class GestionAlmacen extends javax.swing.JFrame {
             }
         });
 
+        pedidosButton.setText("Almacén");
+        pedidosButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pedidosButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -63,7 +71,8 @@ public class GestionAlmacen extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(botonProveedor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(botonClientes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(botonArticulo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(botonArticulo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pedidosButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(153, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -75,7 +84,9 @@ public class GestionAlmacen extends javax.swing.JFrame {
                 .addComponent(botonProveedor)
                 .addGap(18, 18, 18)
                 .addComponent(botonArticulo)
-                .addContainerGap(144, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(pedidosButton)
+                .addContainerGap(99, Short.MAX_VALUE))
         );
 
         pack();
@@ -96,6 +107,11 @@ public class GestionAlmacen extends javax.swing.JFrame {
         GestionProveedores gProv = new GestionProveedores(this, true);
         gProv.setVisible(true);
     }//GEN-LAST:event_botonProveedorActionPerformed
+
+    private void pedidosButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pedidosButtonActionPerformed
+        GestionPedidos gp = new GestionPedidos(this, true);
+        gp.setVisible(true);
+    }//GEN-LAST:event_pedidosButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -136,5 +152,6 @@ public class GestionAlmacen extends javax.swing.JFrame {
     private javax.swing.JButton botonArticulo;
     private javax.swing.JButton botonClientes;
     private javax.swing.JButton botonProveedor;
+    private javax.swing.JButton pedidosButton;
     // End of variables declaration//GEN-END:variables
 }
